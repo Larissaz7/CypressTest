@@ -17,7 +17,6 @@ describe('OrangeHRM - Módulo de Performance (Manage Reviews) - Completo', () =>
     cy.contains('.oxd-topbar-body-nav-tab-link', 'Manage Reviews').click();
   });
 
-  
   // CENÁRIOS POSITIVOS
 
   it('Deve criar uma nova revisão de desempenho com sucesso', () => {

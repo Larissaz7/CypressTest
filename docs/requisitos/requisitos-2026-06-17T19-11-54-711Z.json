@@ -1,0 +1,7 @@
+[
+  {
+    "requisito_id": "RF-001",
+    "descricao": "Usuario deve conseguir fazer login no OrangeHRM com credenciais validas.",
+    "criterios_aceite": []
+  }
+]

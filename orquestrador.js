@@ -4,6 +4,27 @@ const { spawnSync } = require("child_process");
 
 const ROOT_DIR = __dirname;
 const AGENTS_DIR = path.join(ROOT_DIR, "docs", "agents");
+const GENERATED_SPECS_DIR = path.join(ROOT_DIR, "cypress", "e2e", "generated");
+
+function createRunId() {
+  return new Date().toISOString().replace(/[:.]/g, "-");
+}
+
+function ensureDir(dirPath) {
+  fs.mkdirSync(dirPath, { recursive: true });
+}
+
+function writeJson(filePath, data) {
+  ensureDir(path.dirname(filePath));
+  fs.writeFileSync(filePath, `${JSON.stringify(data, null, 2)}\n`, "utf8");
+  return filePath;
+}
+
+function writeText(filePath, data) {
+  ensureDir(path.dirname(filePath));
+  fs.writeFileSync(filePath, data, "utf8");
+  return filePath;
+}
 
 function readMarkdownInstructions(agentsDir = AGENTS_DIR) {
   const requiredFiles = {
@@ -32,7 +53,7 @@ function readMarkdownInstructions(agentsDir = AGENTS_DIR) {
     })
   );
 }
-
+// Normaliza os requisitos de entrada para um formato
 function normalizeRequirements(input) {
   if (Array.isArray(input)) {
     return input;
@@ -74,7 +95,7 @@ function slugify(value) {
     .replace(/^-|-$/g, "")
     .slice(0, 40) || "fluxo";
 }
-
+// Action Tool para executar os testes Cypress
 function executar_cypress(options = {}) {
   const projectDir = path.resolve(ROOT_DIR);
   const cwd = path.resolve(options.cwd || ROOT_DIR);
@@ -83,21 +104,23 @@ function executar_cypress(options = {}) {
     throw new Error(`A ferramenta executar_cypress so pode rodar dentro de: ${projectDir}`);
   }
 
-  const args = ["cypress", "run"];
+  const cypressBin = path.join(projectDir, "node_modules", "cypress", "bin", "cypress");
+  const args = [cypressBin, "run"];
   if (options.spec) {
-    args.push("--spec", options.spec);
+    const spec = Array.isArray(options.spec) ? options.spec.join(",") : options.spec;
+    args.push("--spec", spec);
   }
 
   const startedAt = Date.now();
-  const result = spawnSync("npx", args, {
+  const command = process.execPath;
+  const result = spawnSync(command, args, {
     cwd: projectDir,
     encoding: "utf8",
-    shell: process.platform === "win32",
   });
 
   return {
     ferramenta: "executar_cypress",
-    comando: ["npx", ...args].join(" "),
+    comando: ["node", "node_modules/cypress/bin/cypress", ...args.slice(1)].join(" "),
     cwd: projectDir,
     exitCode: result.status,
     duracao_ms: Date.now() - startedAt,
@@ -108,20 +131,47 @@ function executar_cypress(options = {}) {
   };
 }
 
+function persistirGeracao(geracao, runId = createRunId()) {
+  const artifacts = {
+    runId,
+    requisitosFile: writeJson(path.join(ROOT_DIR, "docs", "requisitos", `requisitos-${runId}.json`), geracao.requisitos),
+    casosFile: writeJson(path.join(ROOT_DIR, "docs", "casos-de-teste", `casos-${runId}.json`), geracao.casosDeTeste),
+    specs: [],
+  };
+
+  for (const script of geracao.scripts) {
+    const absolutePath = path.join(ROOT_DIR, script.arquivo);
+    writeText(absolutePath, script.codigo);
+    script.status_geracao = "gravado";
+    script.caminho_absoluto = absolutePath;
+    artifacts.specs.push(script.arquivo);
+  }
+
+  geracao.artifacts = artifacts;
+  return artifacts;
+}
+
+function persistirResultado(execucao, avaliacao, runId) {
+  return {
+    resultadoFile: writeJson(path.join(ROOT_DIR, "docs", "resultados", `resultado-${runId}.json`), execucao),
+    avaliacaoFile: writeJson(path.join(ROOT_DIR, "docs", "avaliacoes", `avaliacao-${runId}.json`), avaliacao),
+  };
+}
+// Exemplo de uso do Agente Orquestrador com requisitos e execucao
 class Agent {
-  constructor(name, instructions) {
+  constructor(name, instructions) { 
     this.name = name;
     this.instructions = instructions;
   }
 
   execute() {
-    throw new Error(`Agente ${this.name} deve implementar execute()`);
+    throw new Error(`Agente ${this.name} deve implementar execute()`); 
   }
 }
 
 class AgenteGerador extends Agent {
   execute(requirements) {
-    const requisitos = normalizeRequirements(requirements);
+    const requisitos = normalizeRequirements(requirements);//de onde pega os requisitos? do input do execute, ou seja, do parseArgs
     const casosDeTeste = requisitos.flatMap((requisito, index) => {
       const requisitoId = requisito.requisito_id || `RF-${String(index + 1).padStart(3, "0")}`;
       const descricao = requisito.descricao || String(requisito);
@@ -174,10 +224,10 @@ class AgenteGerador extends Agent {
     });
 
     const scripts = casosDeTeste.map((caso) => {
-      const specName = `${slugify(caso.requisito_id)}.generated.cy.js`;
+      const specName = `${slugify(caso.requisito_id)}-${slugify(caso.id)}.generated.cy.js`;
       return {
         caso_id: caso.id,
-        arquivo: path.join("cypress", "e2e", specName),
+        arquivo: path.join("cypress", "e2e", "generated", specName),
         teste: `${caso.id} - ${caso.titulo}`,
         framework: "Cypress",
         status_geracao: "planejado",
@@ -195,13 +245,64 @@ class AgenteGerador extends Agent {
   }
 
   createCypressSkeleton(caso) {
+    const descricao = `${caso.titulo} ${caso.resultado_esperado}`.toLowerCase();
+    if (descricao.includes("login")) {
+      return this.createLoginCypressSkeleton(caso);
+    }
+
     return [
       `describe('${caso.requisito_id}', () => {`,
       `  it('${caso.id} - ${caso.titulo.replace(/'/g, "\\'")}', () => {`,
       "    cy.visit('/');",
       `    // Passos planejados: ${caso.passos.join(" | ")}`,
       `    // Resultado esperado: ${caso.resultado_esperado}`,
-      "    cy.contains('body', '').should('exist');",
+      "    cy.get('body').should('be.visible');",
+      "  });",
+      "});",
+      "",
+    ].join("\n");
+  }
+
+  createLoginCypressSkeleton(caso) {
+    if (caso.tipo === "positivo") {
+      return [
+        `describe('${caso.requisito_id}', () => {`,
+        `  it('${caso.id} - ${caso.titulo.replace(/'/g, "\\'")}', () => {`,
+        "    cy.visit('/web/index.php/auth/login');",
+        "    cy.get('input[name=\"username\"]').should('be.visible').type('Admin');",
+        "    cy.get('input[name=\"password\"]').should('be.visible').type('admin123');",
+        "    cy.get('button[type=\"submit\"]').click();",
+        "    cy.url().should('include', '/web/index.php/dashboard/index');",
+        "    cy.get('.oxd-topbar-header-title').should('contain', 'Dashboard');",
+        "  });",
+        "});",
+        "",
+      ].join("\n");
+    }
+
+    if (caso.tipo === "negativo") {
+      return [
+        `describe('${caso.requisito_id}', () => {`,
+        `  it('${caso.id} - ${caso.titulo.replace(/'/g, "\\'")}', () => {`,
+        "    cy.visit('/web/index.php/auth/login');",
+        "    cy.get('input[name=\"username\"]').should('be.visible').type('UsuarioInvalido');",
+        "    cy.get('input[name=\"password\"]').should('be.visible').type('senhaErrada');",
+        "    cy.get('button[type=\"submit\"]').click();",
+        "    cy.get('.oxd-alert-content').should('be.visible').and('contain', 'Invalid credentials');",
+        "  });",
+        "});",
+        "",
+      ].join("\n");
+    }
+
+    return [
+      `describe('${caso.requisito_id}', () => {`,
+      `  it('${caso.id} - ${caso.titulo.replace(/'/g, "\\'")}', () => {`,
+      "    cy.visit('/web/index.php/auth/login');",
+      "    cy.get('input[name=\"username\"]').should('be.visible').clear();",
+      "    cy.get('input[name=\"password\"]').should('be.visible').clear();",
+      "    cy.get('button[type=\"submit\"]').click();",
+      "    cy.get('.oxd-input-field-error-message').should('be.visible');",
       "  });",
       "});",
       "",
@@ -217,8 +318,9 @@ class AgenteExecutor extends Agent {
 
   execute(geracao, options = {}) {
     const dryRun = options.dryRun !== false;
-    const comando = options.spec
-      ? `npx cypress run --spec "${options.spec}"`
+    const spec = options.spec || geracao.artifacts?.specs;
+    const comando = spec
+      ? `npx cypress run --spec "${Array.isArray(spec) ? spec.join(",") : spec}"`
       : "npx cypress run";
 
     if (dryRun) {
@@ -232,6 +334,7 @@ class AgenteExecutor extends Agent {
         falharam: 0,
         pendentes: geracao.scripts.length,
         falhas: [],
+        specs: spec || [],
         entrada: geracao.scripts,
       };
     }
@@ -242,7 +345,7 @@ class AgenteExecutor extends Agent {
 
     const result = this.tools.executar_cypress({
       cwd: ROOT_DIR,
-      spec: options.spec,
+      spec,
     });
 
     return {
@@ -261,6 +364,7 @@ class AgenteExecutor extends Agent {
       falharam: result.exitCode === 0 ? 0 : geracao.scripts.length,
       pendentes: 0,
       falhas: result.exitCode === 0 ? [] : [{ erro: result.erro || result.stderr || result.stdout || "Falha na execucao" }],
+      specs: spec || [],
       entrada: geracao.scripts,
     };
   }
@@ -323,17 +427,25 @@ class AgenteOrquestrador extends Agent {
 
   execute(input = {}) {
     const requisitos = input.requisitos || input.requirements || input.requisito || input.requirement;
+    const runId = input.runId || createRunId();
     const geracao = this.agents.gerador.execute(requisitos);
+    const artifacts = persistirGeracao(geracao, runId);
     const execucao = this.agents.executor.execute(geracao, input.options || {});
     const avaliacao = this.agents.avaliador.execute(execucao, geracao, input.criterios || {});
+    const resultadoArtifacts = persistirResultado(execucao, avaliacao, runId);
 
     return {
       agente: this.name,
       instrucoes_usadas: this.instructions.fileName,
+      runId,
       etapas: {
         geracao,
         execucao,
         avaliacao,
+      },
+      artifacts: {
+        ...artifacts,
+        ...resultadoArtifacts,
       },
       resumo: {
         requisitos_processados: geracao.requisitos.length,
@@ -410,6 +522,8 @@ module.exports = {
   AgenteOrquestrador,
   createManager,
   executar_cypress,
+  persistirGeracao,
+  persistirResultado,
   normalizeRequirements,
   readMarkdownInstructions,
 };

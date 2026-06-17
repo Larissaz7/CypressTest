@@ -1,0 +1,17 @@
+{
+  "agente": "Agente Avaliador",
+  "instrucoes_usadas": "04-avaliador-resultados.md",
+  "criterios": {
+    "cobertura_minima_requisitos": 0.8,
+    "taxa_minima_sucesso_execucao": 0.9,
+    "falhas_criticas_permitidas": 0,
+    "scripts_devem_ser_executaveis": true
+  },
+  "cobertura_requisitos": 1,
+  "taxa_scripts_gerados": 1,
+  "taxa_sucesso_execucao": 1,
+  "falhas_criticas": 0,
+  "classificacao": "eficaz",
+  "conclusao": "Fluxo classificado como eficaz.",
+  "melhorias_recomendadas": []
+}
