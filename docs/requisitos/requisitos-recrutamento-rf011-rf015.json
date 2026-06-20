@@ -1,0 +1,52 @@
+[
+  {
+    "requisito_id": "RF-011",
+    "descricao": "Permitir a alteracao manual ou automatica de status do candidato no funil de contratacao (Shortlist).",
+    "criterios_aceite": [
+      "O candidato deve estar no estado inicial 'Inscrito' (Application Initiated) dentro de uma vaga ativa.",
+      "O recrutador seleciona o candidato na lista e clica na acao 'Mover para Shortlist' (Selecionados).",
+      "O sistema altera o status do candidato para 'Shortlisted', registra a data/hora no historico e habilita o botao para agendamento de entrevistas.",
+      "Se o candidato ja estiver em um status terminal (Rejeitado ou Contratado), o sistema desabilita a acao de mover para Shortlist e impede a operacao."
+    ]
+  },
+  {
+    "requisito_id": "RF-012",
+    "descricao": "Permitir o agendamento de entrevistas e atribuicao de entrevistadores para o candidato.",
+    "criterios_aceite": [
+      "O candidato deve estar no status 'Shortlisted' ou em uma etapa de entrevista anterior.",
+      "O recrutador clica em 'Agendar Entrevista', preenche o titulo da entrevista, seleciona o entrevistador (colaborador interno), data e horario.",
+      "O sistema altera o status do candidato para 'Entrevista Agendada', envia uma notificacao por e-mail para o entrevistador com o arquivo de convite (.ics) e anexa o curriculo do candidato.",
+      "Se o usuario tentar salvar o agendamento com uma data passada ou sem selecionar um entrevistador, o sistema exibe o erro: 'Data invalida ou entrevistador nao selecionado' e impede o salvamento."
+    ]
+  },
+  {
+    "requisito_id": "RF-013",
+    "descricao": "Permitir o registro do resultado e feedback da entrevista realizada.",
+    "criterios_aceite": [
+      "O candidato deve estar no status 'Entrevista Agendada'.",
+      "O entrevistador ou recrutador acessa o perfil do candidato, digita as notas/feedback no campo de texto e seleciona o resultado ('Aprovado' ou 'Reprovado').",
+      "O sistema salva o feedback de forma permanente no historico do candidato. Se 'Aprovado', o status muda para 'Entrevista Passada' (Interview Passed); se 'Reprovado', muda para 'Rejeitado'.",
+      "Se o usuario tentar salvar o resultado sem preencher o parecer descritivo (feedback), o sistema impede a acao e exibe o alerta: 'O preenchimento do feedback e obrigatorio para encerrar a etapa'."
+    ]
+  },
+  {
+    "requisito_id": "RF-014",
+    "descricao": "Permitir a formalizacao e o envio de uma proposta de emprego (Job Offer) para o candidato aprovado.",
+    "criterios_aceite": [
+      "O candidato deve ter passado com sucesso por todas as etapas de entrevista configuradas para a vaga.",
+      "O recrutador clica na acao 'Fazer Proposta' (Offer Job), faz o upload do documento de oferta formal e preenche os detalhes financeiros basicos.",
+      "O sistema altera o status do candidato para 'Proposta Oferecida' (Job Offered) e disponibiliza as opcoes de 'Aceitar' ou 'Recusar' proposta na tela de gestao.",
+      "Se o recrutador tentar enviar a proposta sem anexar o documento formal de contratacao, o sistema exibe a mensagem: 'E obrigatorio anexar o documento de proposta de emprego'."
+    ]
+  },
+  {
+    "requisito_id": "RF-015",
+    "descricao": "Finalizar o processo de recrutamento convertendo o candidato em novo colaborador (Hired).",
+    "criterios_aceite": [
+      "O candidato deve estar no status 'Proposta Oferecida'.",
+      "O recrutador clica em 'Marcar como Contratado' (Hire) apos a confirmacao do candidato.",
+      "O sistema altera o status do candidato para 'Contratado' (Hired), fecha automaticamente uma das posicoes disponiveis na vaga e abre o assistente para transferir os dados do candidato diretamente para o modulo PIM (Personal Information Management) como funcionario.",
+      "Se a vaga ja tiver atingido o limite maximo de posicoes preenchidas, o sistema exibe o aviso: 'Nao ha posicoes disponiveis nesta vaga. Deseja reabrir uma vaga ou cancelar a acao?'."
+    ]
+  }
+]

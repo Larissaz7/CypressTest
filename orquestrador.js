@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
+const { generate: generateDetailedTests } = require("./qa-generator");
 
 const ROOT_DIR = __dirname;
 const AGENTS_DIR = path.join(ROOT_DIR, "docs", "agents");
@@ -171,69 +172,8 @@ class Agent {
 
 class AgenteGerador extends Agent {
   execute(requirements) {
-    const requisitos = normalizeRequirements(requirements);//de onde pega os requisitos? do input do execute, ou seja, do parseArgs
-    const casosDeTeste = requisitos.flatMap((requisito, index) => {
-      const requisitoId = requisito.requisito_id || `RF-${String(index + 1).padStart(3, "0")}`;
-      const descricao = requisito.descricao || String(requisito);
-      const baseId = String(index + 1).padStart(3, "0");
-
-      return [
-        {
-          id: `CT-${baseId}-P`,
-          requisito_id: requisitoId,
-          tipo: "positivo",
-          titulo: `Fluxo positivo - ${descricao}`,
-          pre_condicoes: ["Aplicacao acessivel no ambiente experimental"],
-          dados: {},
-          passos: [
-            "Acessar a funcionalidade descrita no requisito",
-            "Informar dados validos",
-            "Executar a acao principal",
-          ],
-          resultado_esperado: "Sistema conclui o fluxo com sucesso",
-        },
-        {
-          id: `CT-${baseId}-N`,
-          requisito_id: requisitoId,
-          tipo: "negativo",
-          titulo: `Fluxo negativo - ${descricao}`,
-          pre_condicoes: ["Aplicacao acessivel no ambiente experimental"],
-          dados: {},
-          passos: [
-            "Acessar a funcionalidade descrita no requisito",
-            "Informar dados invalidos ou incompletos",
-            "Executar a acao principal",
-          ],
-          resultado_esperado: "Sistema impede a acao e exibe mensagem adequada",
-        },
-        {
-          id: `CT-${baseId}-E`,
-          requisito_id: requisitoId,
-          tipo: "excecao",
-          titulo: `Caso de excecao - ${descricao}`,
-          pre_condicoes: ["Aplicacao acessivel no ambiente experimental"],
-          dados: {},
-          passos: [
-            "Acessar a funcionalidade descrita no requisito",
-            "Simular condicao inesperada ou limite",
-            "Observar o comportamento do sistema",
-          ],
-          resultado_esperado: "Sistema trata a excecao sem comportamento inconsistente",
-        },
-      ];
-    });
-
-    const scripts = casosDeTeste.map((caso) => {
-      const specName = `${slugify(caso.requisito_id)}-${slugify(caso.id)}.generated.cy.js`;
-      return {
-        caso_id: caso.id,
-        arquivo: path.join("cypress", "e2e", "generated", specName),
-        teste: `${caso.id} - ${caso.titulo}`,
-        framework: "Cypress",
-        status_geracao: "planejado",
-        codigo: this.createCypressSkeleton(caso),
-      };
-    });
+    const requisitos = normalizeRequirements(requirements);
+    const { cases: casosDeTeste, scripts } = generateDetailedTests(requisitos);
 
     return {
       agente: this.name,
@@ -242,71 +182,6 @@ class AgenteGerador extends Agent {
       casosDeTeste,
       scripts,
     };
-  }
-
-  createCypressSkeleton(caso) {
-    const descricao = `${caso.titulo} ${caso.resultado_esperado}`.toLowerCase();
-    if (descricao.includes("login")) {
-      return this.createLoginCypressSkeleton(caso);
-    }
-
-    return [
-      `describe('${caso.requisito_id}', () => {`,
-      `  it('${caso.id} - ${caso.titulo.replace(/'/g, "\\'")}', () => {`,
-      "    cy.visit('/');",
-      `    // Passos planejados: ${caso.passos.join(" | ")}`,
-      `    // Resultado esperado: ${caso.resultado_esperado}`,
-      "    cy.get('body').should('be.visible');",
-      "  });",
-      "});",
-      "",
-    ].join("\n");
-  }
-
-  createLoginCypressSkeleton(caso) {
-    if (caso.tipo === "positivo") {
-      return [
-        `describe('${caso.requisito_id}', () => {`,
-        `  it('${caso.id} - ${caso.titulo.replace(/'/g, "\\'")}', () => {`,
-        "    cy.visit('/web/index.php/auth/login');",
-        "    cy.get('input[name=\"username\"]').should('be.visible').type('Admin');",
-        "    cy.get('input[name=\"password\"]').should('be.visible').type('admin123');",
-        "    cy.get('button[type=\"submit\"]').click();",
-        "    cy.url().should('include', '/web/index.php/dashboard/index');",
-        "    cy.get('.oxd-topbar-header-title').should('contain', 'Dashboard');",
-        "  });",
-        "});",
-        "",
-      ].join("\n");
-    }
-
-    if (caso.tipo === "negativo") {
-      return [
-        `describe('${caso.requisito_id}', () => {`,
-        `  it('${caso.id} - ${caso.titulo.replace(/'/g, "\\'")}', () => {`,
-        "    cy.visit('/web/index.php/auth/login');",
-        "    cy.get('input[name=\"username\"]').should('be.visible').type('UsuarioInvalido');",
-        "    cy.get('input[name=\"password\"]').should('be.visible').type('senhaErrada');",
-        "    cy.get('button[type=\"submit\"]').click();",
-        "    cy.get('.oxd-alert-content').should('be.visible').and('contain', 'Invalid credentials');",
-        "  });",
-        "});",
-        "",
-      ].join("\n");
-    }
-
-    return [
-      `describe('${caso.requisito_id}', () => {`,
-      `  it('${caso.id} - ${caso.titulo.replace(/'/g, "\\'")}', () => {`,
-      "    cy.visit('/web/index.php/auth/login');",
-      "    cy.get('input[name=\"username\"]').should('be.visible').clear();",
-      "    cy.get('input[name=\"password\"]').should('be.visible').clear();",
-      "    cy.get('button[type=\"submit\"]').click();",
-      "    cy.get('.oxd-input-field-error-message').should('be.visible');",
-      "  });",
-      "});",
-      "",
-    ].join("\n");
   }
 }
 

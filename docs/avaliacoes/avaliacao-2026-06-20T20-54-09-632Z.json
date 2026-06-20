@@ -10,8 +10,10 @@
   "cobertura_requisitos": 1,
   "taxa_scripts_gerados": 1,
   "taxa_sucesso_execucao": 0,
-  "falhas_criticas": 0,
-  "classificacao": "inconclusivo",
-  "conclusao": "Fluxo orquestrado sem executar Cypress; execute com --run para medir eficacia real.",
-  "melhorias_recomendadas": []
+  "falhas_criticas": 15,
+  "classificacao": "ineficaz",
+  "conclusao": "Fluxo classificado como ineficaz.",
+  "melhorias_recomendadas": [
+    "Revisar falhas de execucao antes de concluir eficacia."
+  ]
 }

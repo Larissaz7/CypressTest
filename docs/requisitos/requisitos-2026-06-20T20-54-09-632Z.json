@@ -1,0 +1,52 @@
+[
+  {
+    "requisito_id": "RF-001",
+    "descricao": "Permitir a criação de uma nova vaga preenchendo as informações básicas essenciais (Vaga Info).",
+    "criterios_aceite": [
+      "O usuário deve estar autenticado e na tela de criação de vagas (passo 1).",
+      "O usuário seleciona o Cargo, preenche o Nome da Vaga, define o Número de Vagas, escolhe o Hiring Manager, a Localização e insere a Descrição.",
+      "Ao clicar em 'Avançar', o sistema valida os dados, salva o rascunho e direciona o usuário para o passo 2 (Workflow).",
+      "Se algum campo obrigatório (Cargo, Nome da Vaga, Hiring Manager) for deixado em branco, o sistema impede o avanço, destaca os campos em vermelho e exibe a mensagem: 'Campo obrigatório não preenchido'."
+    ]
+  },
+  {
+    "requisito_id": "RF-003",
+    "descricao": "Permitir a criação de uma nova vaga utilizando um modelo (template) preexistente.",
+    "criterios_aceite": [
+      "O usuário deve estar iniciando o fluxo de criação de vaga e possuir templates salvos no sistema.",
+      "O usuário aciona a opção 'Usar Modelo' e seleciona o template desejado a partir de uma lista suspensa.",
+      "O sistema preenche automaticamente as etapas de Workflow, as perguntas do Formulário e as regras de Triagem com base no modelo escolhido.",
+      "Se o template selecionado estiver corrompido ou indisponível, o sistema exibe a mensagem: 'Não foi possível carregar o modelo. Por favor, selecione outro ou crie a vaga do zero'."
+    ]
+  },
+  {
+    "requisito_id": "RF-004",
+    "descricao": "Permitir a personalização do funil de recrutamento e a configuração de entrevistadores para a vaga.",
+    "criterios_aceite": [
+      "O usuário deve ter preenchido com sucesso o passo 1 (Vaga Info) e estar na tela de Workflow (passo 2).",
+      "O usuário adiciona novas etapas ao funil (ex: Entrevista Técnica) e vincula colaboradores específicos como entrevistadores dessas etapas.",
+      "Ao clicar em 'Avançar', o sistema armazena a estrutura do funil e as atribuições de entrevistadores associadas àquela vaga específica.",
+      "Se o usuário tentar avançar sem definir pelo menos uma etapa de recrutamento válida, o sistema exibe o alerta: 'É necessário configurar pelo menos uma etapa para o fluxo de trabalho'."
+    ]
+  },
+  {
+    "requisito_id": "RF-008",
+    "descricao": "Permitir a configuração de regras de triagem inteligente (Smart Screening) com base nas perguntas do formulário.",
+    "criterios_aceite": [
+      "O usuário deve estar no passo 4 (Triagem Inteligente) da vaga em edição.",
+      "O usuário seleciona uma pergunta do formulário, define a resposta esperada e vincula a uma ação automática (ex: Rejeitar Candidate).",
+      "O sistema armazena a regra de corte e exibe uma mensagem de confirmação 'Regra salva com sucesso'.",
+      "Se o usuário tentar salvar uma regra sem especificar uma ação automática ou sem selecionar a pergunta correspondente, o sistema exibe o erro: 'Configure todos os parâmetros da regra antes de salvar'."
+    ]
+  },
+  {
+    "requisito_id": "RF-010",
+    "descricao": "Permitir a publicação e divulgação da vaga configurada nos canais internos e externos.",
+    "criterios_aceite": [
+      "A vaga deve estar com o status 'Inativa' ou 'Rascunho' e possuir todas as etapas de configuração preenchidas.",
+      "O usuário acessa a aba de divulgação, seleciona os canais desejados (Portal de Carreiras/Job Boards) e clica em 'Publicar Vaga'.",
+      "O sistema altera o status da vaga para 'Ativa', gera a URL pública de candidatura e dispara os dados da vaga para as plataformas externas.",
+      "Se houver falha de rede ou de autenticação com as APIs externas (ex: LinkedIn), o sistema ativa a vaga no portal interno e exibe o aviso: 'Falha ao integrar com alguns canais externos. Vaga publicada apenas localmente'."
+    ]
+  }
+]
