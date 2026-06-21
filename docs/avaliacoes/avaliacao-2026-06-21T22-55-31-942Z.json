@@ -9,11 +9,9 @@
   },
   "cobertura_requisitos": 1,
   "taxa_scripts_gerados": 1,
-  "taxa_sucesso_execucao": 0,
-  "falhas_criticas": 15,
-  "classificacao": "ineficaz",
-  "conclusao": "Fluxo classificado como ineficaz.",
-  "melhorias_recomendadas": [
-    "Revisar falhas de execucao antes de concluir eficacia."
-  ]
+  "taxa_sucesso_execucao": 1,
+  "falhas_criticas": 0,
+  "classificacao": "eficaz",
+  "conclusao": "Fluxo classificado como eficaz.",
+  "melhorias_recomendadas": []
 }

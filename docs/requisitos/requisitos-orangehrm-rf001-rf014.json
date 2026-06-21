@@ -1,0 +1,142 @@
+[
+  {
+    "requisito_id": "RF-001",
+    "descricao": "Permitir a consulta de vagas cadastradas no módulo Recruitment.",
+    "criterios_aceite": [
+      "O usuário deve estar autenticado e acessar 'Recruitment > Vacancies'.",
+      "A tela deve disponibilizar os filtros 'Job Title', 'Vacancy', 'Hiring Manager' e 'Status'.",
+      "Ao clicar em 'Search', o sistema deve listar somente as vagas compatíveis com os filtros informados.",
+      "Ao clicar em 'Reset', o sistema deve limpar os filtros e restaurar a listagem de vagas."
+    ]
+  },
+  {
+    "requisito_id": "RF-002",
+    "descricao": "Permitir o cadastro de uma nova vaga no módulo Recruitment.",
+    "criterios_aceite": [
+      "O usuário deve acessar 'Recruitment > Vacancies' e clicar em 'Add'.",
+      "O formulário deve apresentar 'Vacancy Name', 'Job Title', 'Description', 'Hiring Manager' e 'Number of Positions'.",
+      "Ao preencher os campos obrigatórios e clicar em 'Save', o sistema deve salvar a vaga e exibir uma notificação de sucesso.",
+      "Após o salvamento, a vaga deve ficar disponível na consulta de Vacancies."
+    ]
+  },
+  {
+    "requisito_id": "RF-003",
+    "descricao": "Permitir configurar o status e a publicação da vaga no RSS Feed e na página pública.",
+    "criterios_aceite": [
+      "O formulário 'Add Vacancy' deve apresentar as opções 'Active' e 'Publish in RSS Feed and Web Page'.",
+      "O usuário deve poder ativar ou desativar a vaga por meio da opção 'Active'.",
+      "Ao habilitar a publicação e salvar, o sistema deve disponibilizar 'RSS Feed URL' e 'Web Page URL'.",
+      "Ao desabilitar a publicação, a vaga não deve permanecer disponível nos canais públicos do OrangeHRM."
+    ]
+  },
+  {
+    "requisito_id": "RF-004",
+    "descricao": "Validar os campos obrigatórios e limites do cadastro de vagas.",
+    "criterios_aceite": [
+      "O sistema deve exigir 'Vacancy Name', 'Job Title' e 'Hiring Manager' antes do salvamento.",
+      "Se um campo obrigatório estiver vazio, o sistema deve permanecer em 'Add Vacancy' e exibir a mensagem 'Required'.",
+      "O campo 'Number of Positions' deve aceitar somente uma quantidade numérica válida de posições.",
+      "A vaga não deve ser criada enquanto houver mensagens de validação visíveis no formulário."
+    ]
+  },
+  {
+    "requisito_id": "RF-005",
+    "descricao": "Permitir a consulta e filtragem de candidatos no módulo Recruitment.",
+    "criterios_aceite": [
+      "O usuário deve acessar 'Recruitment > Candidates'.",
+      "A tela deve disponibilizar filtros por 'Job Title', 'Vacancy', 'Hiring Manager', 'Status', 'Candidate Name', 'Keywords', período e 'Method of Application'.",
+      "Ao clicar em 'Search', o sistema deve apresentar somente candidatos compatíveis com os filtros informados.",
+      "Ao clicar em 'Reset', o sistema deve limpar todos os filtros da consulta."
+    ]
+  },
+  {
+    "requisito_id": "RF-006",
+    "descricao": "Permitir o cadastro manual de um candidato para uma vaga.",
+    "criterios_aceite": [
+      "O usuário deve acessar 'Recruitment > Candidates' e clicar em 'Add'.",
+      "O formulário deve permitir informar nome completo, vaga, e-mail, telefone, currículo, palavras-chave, data da candidatura, notas e consentimento de retenção.",
+      "Ao preencher os campos obrigatórios e clicar em 'Save', o sistema deve criar o candidato e exibir uma notificação de sucesso.",
+      "O candidato criado deve ficar disponível na listagem de Candidates."
+    ]
+  },
+  {
+    "requisito_id": "RF-007",
+    "descricao": "Validar dados obrigatórios e arquivo de currículo no cadastro de candidatos.",
+    "criterios_aceite": [
+      "O sistema deve exigir 'First Name', 'Last Name' e 'Email' para salvar um candidato.",
+      "O currículo deve aceitar somente arquivos .docx, .doc, .odt, .pdf, .rtf ou .txt com tamanho máximo de 1 MB.",
+      "Ao informar e-mail inválido ou omitir um campo obrigatório, o sistema deve destacar o campo e exibir a validação correspondente.",
+      "Ao selecionar arquivo inválido ou acima do limite, o sistema deve impedir o salvamento e informar a restrição do currículo."
+    ]
+  },
+  {
+    "requisito_id": "RF-008",
+    "descricao": "Permitir mover um candidato de Application Initiated para Shortlisted.",
+    "criterios_aceite": [
+      "O candidato deve estar associado a uma vaga e possuir status 'Application Initiated'.",
+      "O recrutador deve abrir os detalhes do candidato e acionar 'Shortlist'.",
+      "Ao salvar as notas da decisão, o sistema deve alterar o status para 'Shortlisted' e registrar a ação no histórico.",
+      "A ação 'Shortlist' não deve ficar disponível quando o candidato estiver em uma etapa incompatível ou terminal."
+    ]
+  },
+  {
+    "requisito_id": "RF-009",
+    "descricao": "Permitir agendar uma entrevista para um candidato Shortlisted.",
+    "criterios_aceite": [
+      "O candidato deve possuir status 'Shortlisted'.",
+      "O recrutador deve informar título da entrevista, entrevistador, data e horário.",
+      "Ao salvar dados válidos, o sistema deve alterar o status para 'Interview Scheduled' e registrar a entrevista no histórico.",
+      "Se entrevistador, data ou título estiverem ausentes, o sistema deve impedir o agendamento e exibir 'Required'."
+    ]
+  },
+  {
+    "requisito_id": "RF-010",
+    "descricao": "Permitir registrar o resultado da entrevista e concluir o fluxo de contratação do candidato.",
+    "criterios_aceite": [
+      "Um candidato com entrevista agendada deve poder ser marcado como 'Interview Passed' ou 'Interview Failed'.",
+      "Um candidato aprovado deve permitir as ações 'Offer Job' e posteriormente 'Hire'.",
+      "Cada ação salva deve atualizar o status visível e adicionar um registro ao histórico do candidato.",
+      "Ações de etapas futuras não devem ficar disponíveis antes da conclusão da etapa anterior."
+    ]
+  },
+  {
+    "requisito_id": "RF-011",
+    "descricao": "Permitir consultar funcionários cadastrados no módulo PIM.",
+    "criterios_aceite": [
+      "O usuário deve acessar 'PIM > Employee List'.",
+      "A tela deve disponibilizar filtros por 'Employee Name', 'Employee Id', 'Employment Status', 'Include', 'Supervisor Name', 'Job Title' e 'Sub Unit'.",
+      "Ao clicar em 'Search', o sistema deve listar funcionários compatíveis com os filtros informados.",
+      "Ao clicar em 'Reset', o sistema deve limpar os filtros e restaurar a listagem."
+    ]
+  },
+  {
+    "requisito_id": "RF-012",
+    "descricao": "Permitir o cadastro de um funcionário no módulo PIM.",
+    "criterios_aceite": [
+      "O usuário deve acessar 'PIM > Add Employee'.",
+      "O formulário deve permitir informar First Name, Middle Name, Last Name, Employee Id e foto de perfil opcional.",
+      "Ao preencher First Name e Last Name e clicar em 'Save', o sistema deve criar o funcionário e abrir seus detalhes pessoais.",
+      "Se First Name ou Last Name estiver vazio, o sistema deve impedir o cadastro e exibir 'Required'."
+    ]
+  },
+  {
+    "requisito_id": "RF-013",
+    "descricao": "Permitir criar credenciais de acesso durante o cadastro do funcionário.",
+    "criterios_aceite": [
+      "A tela 'Add Employee' deve apresentar a opção 'Create Login Details'.",
+      "Ao ativar a opção, o sistema deve solicitar Username, Password, Confirm Password e Status da conta.",
+      "O sistema deve validar unicidade do Username, força da senha e igualdade entre Password e Confirm Password.",
+      "Com dados válidos, o funcionário e sua conta de acesso devem ser criados na mesma operação."
+    ]
+  },
+  {
+    "requisito_id": "RF-014",
+    "descricao": "Permitir manter os dados funcionais e o relacionamento de supervisão de um funcionário.",
+    "criterios_aceite": [
+      "O usuário deve localizar o funcionário em 'PIM > Employee List' e abrir seu perfil.",
+      "Na aba 'Job', o sistema deve permitir atualizar Job Title, Employment Status, Job Category, Sub Unit e Location.",
+      "Na seção 'Report-to', o sistema deve permitir adicionar um supervisor e selecionar o Reporting Method.",
+      "Ao salvar alterações válidas, o sistema deve exibir uma notificação de sucesso e manter os valores no perfil do funcionário."
+    ]
+  }
+]

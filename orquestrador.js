@@ -96,6 +96,24 @@ function slugify(value) {
     .replace(/^-|-$/g, "")
     .slice(0, 40) || "fluxo";
 }
+
+function parseCypressSummary(output = "") {
+  const totals = { total: 0, passing: 0, failing: 0, pending: 0, skipped: 0 };
+  const resultsPattern = /Tests:\s+(\d+)[\s\S]*?Passing:\s+(\d+)[\s\S]*?Failing:\s+(\d+)[\s\S]*?Pending:\s+(\d+)[\s\S]*?Skipped:\s+(\d+)/g;
+  let match;
+  let found = false;
+
+  while ((match = resultsPattern.exec(output)) !== null) {
+    found = true;
+    totals.total += Number(match[1]);
+    totals.passing += Number(match[2]);
+    totals.failing += Number(match[3]);
+    totals.pending += Number(match[4]);
+    totals.skipped += Number(match[5]);
+  }
+
+  return found ? totals : null;
+}
 // Action Tool para executar os testes Cypress
 function executar_cypress(options = {}) {
   const projectDir = path.resolve(ROOT_DIR);
@@ -119,15 +137,20 @@ function executar_cypress(options = {}) {
     encoding: "utf8",
   });
 
+  const stdout = result.stdout || "";
+  const stderr = result.stderr || "";
+  const logs = [stdout, stderr].filter(Boolean).join("\n");
+
   return {
     ferramenta: "executar_cypress",
     comando: ["node", "node_modules/cypress/bin/cypress", ...args.slice(1)].join(" "),
     cwd: projectDir,
     exitCode: result.status,
     duracao_ms: Date.now() - startedAt,
-    stdout: result.stdout || "",
-    stderr: result.stderr || "",
-    logs: [result.stdout, result.stderr].filter(Boolean).join("\n"),
+    stdout,
+    stderr,
+    logs,
+    summary: parseCypressSummary(logs),
     erro: result.error ? result.error.message : null,
   };
 }
@@ -223,6 +246,12 @@ class AgenteExecutor extends Agent {
       spec,
     });
 
+    const summary = result.summary;
+    const total = summary?.total ?? geracao.scripts.length;
+    const passaram = summary?.passing ?? (result.exitCode === 0 ? total : 0);
+    const falharam = summary?.failing ?? (result.exitCode === 0 ? 0 : total);
+    const pendentes = (summary?.pending || 0) + (summary?.skipped || 0);
+
     return {
       agente: this.name,
       instrucoes_usadas: this.instructions.fileName,
@@ -234,10 +263,10 @@ class AgenteExecutor extends Agent {
       stdout: result.stdout,
       stderr: result.stderr,
       logs: result.logs,
-      total: geracao.scripts.length,
-      passaram: result.exitCode === 0 ? geracao.scripts.length : 0,
-      falharam: result.exitCode === 0 ? 0 : geracao.scripts.length,
-      pendentes: 0,
+      total,
+      passaram,
+      falharam,
+      pendentes,
       falhas: result.exitCode === 0 ? [] : [{ erro: result.erro || result.stderr || result.stdout || "Falha na execucao" }],
       specs: spec || [],
       entrada: geracao.scripts,
@@ -399,6 +428,7 @@ module.exports = {
   executar_cypress,
   persistirGeracao,
   persistirResultado,
+  parseCypressSummary,
   normalizeRequirements,
   readMarkdownInstructions,
 };

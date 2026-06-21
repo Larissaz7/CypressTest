@@ -1,0 +1,324 @@
+[
+  {
+    "id": "CT-001-P",
+    "requisito_id": "RF-002",
+    "tipo": "positivo",
+    "titulo": "Cadastrar vaga ativa com sucesso",
+    "pre_condicoes": [
+      "Usuário autenticado",
+      "Existe Job Title e Hiring Manager ativos"
+    ],
+    "dados_teste": {
+      "vacancy_name": "QA Automation 2026",
+      "job_title": "Account Assistant",
+      "hiring_manager": "a",
+      "positions": "2",
+      "description": "Automação de testes Cypress"
+    },
+    "passos": [
+      "1. Acessar 'Recruitment > Vacancies' e clicar em 'Add'.",
+      "2. Preencher Vacancy Name com 'QA Automation 2026'.",
+      "3. Selecionar Job Title 'Account Assistant'.",
+      "4. Selecionar o primeiro Hiring Manager retornado ao digitar 'a'.",
+      "5. Preencher Number of Positions com '2', Description com 'Automação de testes Cypress' e clicar em 'Save'."
+    ],
+    "resultado_esperado": "O sistema exibe toast Success e abre os detalhes da vaga salva."
+  },
+  {
+    "id": "CT-001-N",
+    "requisito_id": "RF-002",
+    "tipo": "negativo",
+    "titulo": "Bloquear vaga sem nome",
+    "pre_condicoes": [
+      "Usuário autenticado",
+      "Tela Add Vacancy aberta"
+    ],
+    "dados_teste": {
+      "vacancy_name": "",
+      "job_title": "Account Assistant",
+      "hiring_manager": "a"
+    },
+    "passos": [
+      "1. Acessar 'Recruitment > Vacancies > Add'.",
+      "2. Selecionar Job Title 'Account Assistant'.",
+      "3. Selecionar o primeiro Hiring Manager retornado ao digitar 'a'.",
+      "4. Manter Vacancy Name vazio e clicar em 'Save'."
+    ],
+    "resultado_esperado": "O formulário permanece aberto e exibe Required abaixo de Vacancy Name."
+  },
+  {
+    "id": "CT-001-E",
+    "requisito_id": "RF-002",
+    "tipo": "excecao",
+    "titulo": "Bloquear vaga com quantidade não numérica",
+    "pre_condicoes": [
+      "Usuário autenticado",
+      "Tela Add Vacancy aberta"
+    ],
+    "dados_teste": {
+      "vacancy_name": "QA Quantity Invalid",
+      "positions": "abc"
+    },
+    "passos": [
+      "1. Acessar 'Recruitment > Vacancies > Add'.",
+      "2. Preencher Vacancy Name com 'QA Quantity Invalid'.",
+      "3. Digitar 'abc' em Number of Positions.",
+      "4. Clicar em 'Save'."
+    ],
+    "resultado_esperado": "O campo Number of Positions rejeita o valor ou exibe mensagem de formato numérico inválido."
+  },
+  {
+    "id": "CT-002-P",
+    "requisito_id": "RF-006",
+    "tipo": "positivo",
+    "titulo": "Cadastrar candidato manualmente",
+    "pre_condicoes": [
+      "Usuário autenticado",
+      "Tela Add Candidate disponível"
+    ],
+    "dados_teste": {
+      "first_name": "Marina",
+      "middle_name": "Beatriz",
+      "last_name": "Almeida",
+      "email": "marina.qa@example.com",
+      "phone": "85999990001",
+      "keywords": "cypress,qa"
+    },
+    "passos": [
+      "1. Acessar 'Recruitment > Candidates' e clicar em 'Add'.",
+      "2. Preencher First Name, Middle Name e Last Name com Marina Beatriz Almeida.",
+      "3. Preencher Email com marina.qa@example.com e Contact Number com 85999990001.",
+      "4. Preencher Keywords com 'cypress,qa', marcar Consent to keep data e clicar em 'Save'."
+    ],
+    "resultado_esperado": "O sistema exibe toast Success e abre o perfil do candidato cadastrado."
+  },
+  {
+    "id": "CT-002-N",
+    "requisito_id": "RF-006",
+    "tipo": "negativo",
+    "titulo": "Bloquear candidato sem e-mail",
+    "pre_condicoes": [
+      "Usuário autenticado",
+      "Tela Add Candidate aberta"
+    ],
+    "dados_teste": {
+      "first_name": "Marina",
+      "last_name": "Almeida",
+      "email": ""
+    },
+    "passos": [
+      "1. Preencher First Name com Marina e Last Name com Almeida.",
+      "2. Manter Email vazio.",
+      "3. Clicar em 'Save'."
+    ],
+    "resultado_esperado": "O formulário permanece aberto e exibe Required junto ao Email."
+  },
+  {
+    "id": "CT-002-E",
+    "requisito_id": "RF-006",
+    "tipo": "excecao",
+    "titulo": "Bloquear candidato com e-mail malformado",
+    "pre_condicoes": [
+      "Usuário autenticado",
+      "Tela Add Candidate aberta"
+    ],
+    "dados_teste": {
+      "first_name": "Paulo",
+      "last_name": "Costa",
+      "email": "paulo-sem-arroba"
+    },
+    "passos": [
+      "1. Preencher First Name com Paulo e Last Name com Costa.",
+      "2. Informar 'paulo-sem-arroba' em Email.",
+      "3. Clicar em 'Save'."
+    ],
+    "resultado_esperado": "O sistema não salva o candidato e exibe Expected format: admin@example.com ou validação equivalente."
+  },
+  {
+    "id": "CT-003-P",
+    "requisito_id": "RF-008",
+    "tipo": "positivo",
+    "titulo": "Mover candidato para Shortlisted",
+    "pre_condicoes": [
+      "Usuário autenticado",
+      "Existe candidato em Application Initiated"
+    ],
+    "dados_teste": {
+      "status_origin": "Application Initiated",
+      "notes": "Perfil aderente à vaga"
+    },
+    "passos": [
+      "1. Acessar Recruitment > Candidates e abrir candidato em Application Initiated.",
+      "2. Clicar em 'Shortlist'.",
+      "3. Preencher Notes com 'Perfil aderente à vaga'.",
+      "4. Clicar em 'Save'."
+    ],
+    "resultado_esperado": "O status muda para Shortlisted e a ação é registrada no histórico."
+  },
+  {
+    "id": "CT-003-N",
+    "requisito_id": "RF-008",
+    "tipo": "negativo",
+    "titulo": "Ocultar Shortlist para candidato sem vaga",
+    "pre_condicoes": [
+      "Usuário autenticado",
+      "Candidato cadastrado sem vaga associada"
+    ],
+    "dados_teste": {
+      "vacancy": null
+    },
+    "passos": [
+      "1. Cadastrar um candidato sem selecionar Vacancy.",
+      "2. Abrir o perfil do candidato cadastrado.",
+      "3. Inspecionar os botões de ação do perfil."
+    ],
+    "resultado_esperado": "O botão Shortlist não é exibido porque o candidato não participa de um processo seletivo."
+  },
+  {
+    "id": "CT-003-E",
+    "requisito_id": "RF-008",
+    "tipo": "excecao",
+    "titulo": "Ocultar Shortlist em status terminal",
+    "pre_condicoes": [
+      "Usuário autenticado",
+      "Candidato em Rejected ou Hired"
+    ],
+    "dados_teste": {
+      "status": "Rejected"
+    },
+    "passos": [
+      "1. Abrir um candidato com status Rejected.",
+      "2. Inspecionar os botões de ação do perfil."
+    ],
+    "resultado_esperado": "O botão Shortlist não é exibido para o status terminal."
+  },
+  {
+    "id": "CT-004-P",
+    "requisito_id": "RF-012",
+    "tipo": "positivo",
+    "titulo": "Cadastrar funcionário com dados básicos",
+    "pre_condicoes": [
+      "Usuário autenticado",
+      "Employee Id 92012 disponível"
+    ],
+    "dados_teste": {
+      "first_name": "Marina",
+      "middle_name": "Beatriz",
+      "last_name": "Almeida",
+      "employee_id": "92012"
+    },
+    "passos": [
+      "1. Acessar 'PIM > Add Employee'.",
+      "2. Preencher Marina Beatriz Almeida.",
+      "3. Substituir Employee Id por 92012.",
+      "4. Clicar em 'Save'."
+    ],
+    "resultado_esperado": "O sistema exibe Success e redireciona para Personal Details do funcionário."
+  },
+  {
+    "id": "CT-004-N",
+    "requisito_id": "RF-012",
+    "tipo": "negativo",
+    "titulo": "Bloquear funcionário sem First Name",
+    "pre_condicoes": [
+      "Usuário autenticado",
+      "Tela Add Employee aberta"
+    ],
+    "dados_teste": {
+      "first_name": "",
+      "last_name": "Almeida",
+      "employee_id": "92013"
+    },
+    "passos": [
+      "1. Manter First Name vazio.",
+      "2. Preencher Last Name com Almeida e Employee Id com 92013.",
+      "3. Clicar em 'Save'."
+    ],
+    "resultado_esperado": "O sistema permanece em Add Employee e exibe Required em First Name."
+  },
+  {
+    "id": "CT-004-E",
+    "requisito_id": "RF-012",
+    "tipo": "excecao",
+    "titulo": "Bloquear Employee Id duplicado",
+    "pre_condicoes": [
+      "Usuário autenticado",
+      "Employee Id 0001 já existe"
+    ],
+    "dados_teste": {
+      "first_name": "Paulo",
+      "last_name": "Mendes",
+      "employee_id": "0001"
+    },
+    "passos": [
+      "1. Preencher Paulo Mendes.",
+      "2. Informar Employee Id 0001.",
+      "3. Clicar em 'Save'."
+    ],
+    "resultado_esperado": "O sistema não cria o funcionário e informa que o Employee Id já existe."
+  },
+  {
+    "id": "CT-005-P",
+    "requisito_id": "RF-014",
+    "tipo": "positivo",
+    "titulo": "Atualizar Job e adicionar supervisor",
+    "pre_condicoes": [
+      "Usuário autenticado",
+      "Funcionário existente",
+      "Supervisor ativo"
+    ],
+    "dados_teste": {
+      "job_title": "Account Assistant",
+      "employment_status": "Full-Time Permanent",
+      "supervisor_search": "a",
+      "method": "Direct"
+    },
+    "passos": [
+      "1. Pesquisar um funcionário e abrir seu perfil.",
+      "2. Abrir a aba Job e selecionar Job Title Account Assistant e Employment Status Full-Time Permanent.",
+      "3. Salvar e abrir a aba Report-to.",
+      "4. Adicionar o primeiro supervisor retornado ao digitar 'a', selecionar Direct e salvar."
+    ],
+    "resultado_esperado": "O sistema exibe Success e mantém os dados funcionais e o supervisor no perfil."
+  },
+  {
+    "id": "CT-005-N",
+    "requisito_id": "RF-014",
+    "tipo": "negativo",
+    "titulo": "Bloquear supervisor sem Reporting Method",
+    "pre_condicoes": [
+      "Usuário autenticado",
+      "Funcionário e supervisor ativos"
+    ],
+    "dados_teste": {
+      "supervisor_search": "a",
+      "method": ""
+    },
+    "passos": [
+      "1. Abrir Report-to no perfil do funcionário.",
+      "2. Adicionar o primeiro supervisor retornado ao digitar 'a'.",
+      "3. Manter Reporting Method vazio e clicar em Save."
+    ],
+    "resultado_esperado": "O sistema exibe Required em Reporting Method e não grava a relação."
+  },
+  {
+    "id": "CT-005-E",
+    "requisito_id": "RF-014",
+    "tipo": "excecao",
+    "titulo": "Impedir autorreferência de supervisor",
+    "pre_condicoes": [
+      "Usuário autenticado",
+      "Funcionário existente"
+    ],
+    "dados_teste": {
+      "supervisor": "mesmo funcionário",
+      "method": "Direct"
+    },
+    "passos": [
+      "1. Abrir Report-to e clicar em Add Supervisor.",
+      "2. Pesquisar e selecionar o próprio funcionário.",
+      "3. Selecionar Direct e clicar em Save."
+    ],
+    "resultado_esperado": "O sistema rejeita a relação ou exibe validação impedindo autorreferência."
+  }
+]

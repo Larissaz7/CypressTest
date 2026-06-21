@@ -1,0 +1,52 @@
+[
+  {
+    "requisito_id": "RF-002",
+    "descricao": "Permitir o cadastro de uma nova vaga no módulo Recruitment.",
+    "criterios_aceite": [
+      "O usuário deve acessar 'Recruitment > Vacancies' e clicar em 'Add'.",
+      "O formulário deve apresentar 'Vacancy Name', 'Job Title', 'Description', 'Hiring Manager' e 'Number of Positions'.",
+      "Ao preencher os campos obrigatórios e clicar em 'Save', o sistema deve salvar a vaga e exibir uma notificação de sucesso.",
+      "Após o salvamento, a vaga deve ficar disponível na consulta de Vacancies."
+    ]
+  },
+  {
+    "requisito_id": "RF-006",
+    "descricao": "Permitir o cadastro manual de um candidato para uma vaga.",
+    "criterios_aceite": [
+      "O usuário deve acessar 'Recruitment > Candidates' e clicar em 'Add'.",
+      "O formulário deve permitir informar nome completo, vaga, e-mail, telefone, currículo, palavras-chave, data da candidatura, notas e consentimento de retenção.",
+      "Ao preencher os campos obrigatórios e clicar em 'Save', o sistema deve criar o candidato e exibir uma notificação de sucesso.",
+      "O candidato criado deve ficar disponível na listagem de Candidates."
+    ]
+  },
+  {
+    "requisito_id": "RF-008",
+    "descricao": "Permitir mover um candidato de Application Initiated para Shortlisted.",
+    "criterios_aceite": [
+      "O candidato deve estar associado a uma vaga e possuir status 'Application Initiated'.",
+      "O recrutador deve abrir os detalhes do candidato e acionar 'Shortlist'.",
+      "Ao salvar as notas da decisão, o sistema deve alterar o status para 'Shortlisted' e registrar a ação no histórico.",
+      "A ação 'Shortlist' não deve ficar disponível quando o candidato estiver em uma etapa incompatível ou terminal."
+    ]
+  },
+  {
+    "requisito_id": "RF-012",
+    "descricao": "Permitir o cadastro de um funcionário no módulo PIM.",
+    "criterios_aceite": [
+      "O usuário deve acessar 'PIM > Add Employee'.",
+      "O formulário deve permitir informar First Name, Middle Name, Last Name, Employee Id e foto de perfil opcional.",
+      "Ao preencher First Name e Last Name e clicar em 'Save', o sistema deve criar o funcionário e abrir seus detalhes pessoais.",
+      "Se First Name ou Last Name estiver vazio, o sistema deve impedir o cadastro e exibir 'Required'."
+    ]
+  },
+  {
+    "requisito_id": "RF-014",
+    "descricao": "Permitir manter os dados funcionais e o relacionamento de supervisão de um funcionário.",
+    "criterios_aceite": [
+      "O usuário deve localizar o funcionário em 'PIM > Employee List' e abrir seu perfil.",
+      "Na aba 'Job', o sistema deve permitir atualizar Job Title, Employment Status, Job Category, Sub Unit e Location.",
+      "Na seção 'Report-to', o sistema deve permitir adicionar um supervisor e selecionar o Reporting Method.",
+      "Ao salvar alterações válidas, o sistema deve exibir uma notificação de sucesso e manter os valores no perfil do funcionário."
+    ]
+  }
+]
